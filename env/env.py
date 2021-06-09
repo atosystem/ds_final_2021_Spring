@@ -118,6 +118,7 @@ class env:
             self.places[i] = [[] for k in range(self.search_time)]
         self.places["names"] = []
         self.places["infected_names"] = []
+        self.places["number of place"] = self.NUM_P
         
         for i in range(self.POPULATION):
             name = names.get_full_name()
