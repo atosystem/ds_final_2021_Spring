@@ -1,1 +1,36 @@
-{"0": [["Germaine Mavraganis"]], "1": [["Erika Zuleger", "Mary Scott"]], "2": [["Peter Thomas"]], "names": ["Peter Thomas", "Alex Laroche", "Shirley Haag", "Germaine Mavraganis", "Jason Caperton", "Erika Zuleger", "Mary Scott", "Richard Jewell", "Tina Martin", "Lanette Wagner"], "infected_names": ["Peter Thomas", "Shirley Haag", "Tina Martin"], "number of place": 3}
+{
+    "0": [
+        [
+            "Germaine Mavraganis"
+        ]
+    ],
+    "1": [
+        [
+            "Erika Zuleger",
+            "Mary Scott"
+        ]
+    ],
+    "2": [
+        [
+            "Peter Thomas"
+        ]
+    ],
+    "names": [
+        "Peter Thomas",
+        "Alex Laroche",
+        "Shirley Haag",
+        "Germaine Mavraganis",
+        "Jason Caperton",
+        "Erika Zuleger",
+        "Mary Scott",
+        "Richard Jewell",
+        "Tina Martin",
+        "Lanette Wagner"
+    ],
+    "infected_names": [
+        "Peter Thomas",
+        "Shirley Haag",
+        "Tina Martin"
+    ],
+    "number of place": 3
+}
