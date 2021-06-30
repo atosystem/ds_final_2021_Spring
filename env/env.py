@@ -203,6 +203,7 @@ class env:
         self.search_time = math.ceil(Time/5)
         if self.verbose:
             print("search_time is ", self.search_time)
+    # lU TODO ##########################
     def Medical_treatment(self):
         global Accumulate_cured_number
         old_cur = Accumulate_cured_number
@@ -282,6 +283,7 @@ class env:
 #            exit(0)
             goin = 0
             not_goin = 0
+             # lU TODO ##########################
             for person in sick_people:
                 if self.hospital.qsize() < self.hospital_size:
                     self.people[person].curing()
