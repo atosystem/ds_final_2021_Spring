@@ -145,11 +145,10 @@ class env:
         self.datas["people_list"] = {}
         self.datas["infected_people"] = []
         
-        print("Begin")
         places = iter(self.init_address)
         for i in range(self.init_infect_number):
-            # name = names.get_full_name()
             name = str(uuid.uuid4())
+            # name = names.get_full_name()
             # count = 0
             # while name in self.people.keys():
             #     name = names.get_full_name()
