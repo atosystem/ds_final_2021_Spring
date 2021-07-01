@@ -97,7 +97,7 @@ class Person:
             
 class env:
     
-    def __init__(self, POPULATION, NUM_P, I_PROB, O_PROB, progress_time = 10):
+    def __init__(self, POPULATION, NUM_P, I_PROB, O_PROB, progress_time = 1):
         
         self.POPULATION = POPULATION # population of environment
         self.init_infect_number = 1
@@ -109,14 +109,14 @@ class env:
 #        self.search_time = 5 #  being dependent to search time
         self.simulation_time = 3 # how many simulation between search
         self.progress_time = progress_time # how many search to conduct
-        self.verbose = True
+        self.verbose = False
         self.infect_people = []
         self.datas = {}
         self.NUM_P = NUM_P # number of place
         self.place = json.load(codecs.open(r"C:\\Users\\王式珩\\Desktop\\資料結構\\final\\ds_final_2021_Spring\\env\\place.json", 'r', 'utf-8'))
         self.init_address =json.load(codecs.open(r"C:\\Users\\王式珩\\Desktop\\資料結構\\final\\ds_final_2021_Spring\\raw_data\\all_place.json", 'r', 'utf-8'))['Place']
         print("len of add is ", len(self.init_address))
-        self.bed_ratio = 1000
+        self.bed_ratio = 100
         self.hospital_size = self.POPULATION // self.bed_ratio         
         self.hospital = queue.SimpleQueue()
         self.wait_hospital_person = queue.PriorityQueue()
@@ -131,8 +131,11 @@ class env:
 #                                  [0.025, 0.025, 0.025, 0.025,   0.9]
 #                                 ]
         # build place
-        for p in self.place['All_place']:
-            self.ALL_PLACE[p] = set()
+        for place in self.init_address:
+            temp = ""
+            for p in place:
+                temp += p
+            self.ALL_PLACE[temp] = set()
         # build people
         self.datas["people_list"] = {}
         self.datas["infected_people"] = []
@@ -172,9 +175,9 @@ class env:
              self.datas["people_list"][i] = {}
               
     def reset(self): # called when search is over
-        for i in range(self.NUM_P):
-            self.datas[i] = [[] for k in range(self.simulation_time)]
-        for p in self.ALL_PLACE.keys():
+#        for i in range(self.NUM_P):
+#            self.datas[i] = [[] for k in range(self.simulation_time)]
+        for  p in self.ALL_PLACE.keys():
             self.ALL_PLACE[p].clear()
         self.Medical_treatment()
     def search(self):
@@ -184,25 +187,27 @@ class env:
 #        time.sleep(1)
 #        num = 1
 #        print(self.people)
-        import json
+        from Brute_force import Brute_force
 
 #        with open('data.json', 'w', encoding = "uff-8") as fp:
 #            json.dump(self.datas, fp)
-        fp = codecs.open('data.json', 'w', 'utf-8')
-        fp.write(json.dumps(self.datas,ensure_ascii=False))
-        fp.close()
+#        fp = codecs.open('data.json', 'w', 'utf-8')
+#        fp.write(json.dumps(self.datas,ensure_ascii=False))
+#        fp.close()
+        results = Brute_force(self.datas)
 #        with open('infect_name_list.json', 'w') as fp:
 #            json.dump(self.infect_people, fp)
 #        np.save("name_list.npy", self.infect_people)
         
         
-        return [name for name in self.infect_people]
+        return results
     
     def calculate_search_time(self, Time):
         # can be modified
-        self.search_time = math.ceil(Time/5)
+        num = 10 // Time
         if self.verbose:
-            print("search_time is ", self.search_time)
+            print(f"Can take {int(num+1)} people")
+        return int(num+1)
     # lU TODO ##########################
     def Medical_treatment(self):
         global Accumulate_cured_number
@@ -274,17 +279,17 @@ class env:
             if self.verbose:
                 print("-------------------------------------------------------------")            
             for i in range(self.simulation_time):
-                self.new_simulation(i)
+                self.new_simulation_2(i)
             
             start = time.time()
             sick_people = self.search()
             end = time.time()
-            self.calculate_search_time(end-start)
+            num = self.calculate_search_time(end-start)
 #            exit(0)
             goin = 0
             not_goin = 0
              # lU TODO ##########################
-            for person in sick_people:
+            for person in sick_people[:num]:
                 if self.hospital.qsize() < self.hospital_size:
                     self.people[person].curing()
                     self.hospital.put(person)
@@ -292,17 +297,17 @@ class env:
                 else:
                     self.wait_hospital_person.put(person)
                     not_goin += 1
-            if self.verbose:
-                print("Total sick people : ", goin+not_goin)
-                print("Can go to hospital : ", goin)
-                print("Can't go to hospital : ", not_goin)
+#            if self.verbose:
+            print("Total sick people : ", goin+not_goin)
+            print("Can go to hospital : ", goin)
+            print("Can't go to hospital : ", not_goin)
 
                     
             self.reset()
-            if self.verbose:
-                print("Accumulated infected person :",Accumulate_infect_number)
-                print("Accumulated dead person :",Accumulate_dead_number)
-                print("-------------------------------------------------------------")
+#            if self.verbose:
+            print("Accumulated infected person :",Accumulate_infect_number)
+            print("Accumulated dead person :",Accumulate_dead_number)
+            print("-------------------------------------------------------------")
 
             
     def Move(self, last):
@@ -342,6 +347,55 @@ class env:
         if self.verbose:
             print("Go to ", new_location)  
         return new_location
+    
+    def new_simulation_2(self, time_index):
+        infected_place = set()
+        
+        for name in self.people.keys():
+            person = self.people[name]
+            if self.verbose:
+                print("*******************************************")
+                print("Person :", person.get_info())
+            
+            person.last_place = self.Move(person.last_place)
+            temp = ""
+            for p in person.last_place:
+                temp += p
+            # record place of infected, used for virus propagation
+            if (person.state == infection_state[1] or person.state == infection_state[2]):
+#                for p in person.last_place:
+                infected_place.add(temp)
+                if self.verbose:
+                    print(f"{person.last_place} is infected !!")
+            # recorder every place has who
+#            for key in person.last_place:
+            self.ALL_PLACE[temp].add(person.name)
+            # store the data for search
+            self.datas["people_list"][time_index][name] = person.last_place
+        infect_prob = random.uniform(0, 0.1) # infection_state 0 -> 1
+        get_sick_prob = random.uniform(0, 0.1) # infection_state 1 -> 2        
+        
+        while(len(infected_place) > 0): # traverse all the place infected
+            
+            p = infected_place.pop() # got one infected place
+            
+            while(len(self.ALL_PLACE[p]) > 0):# traverse all the name in place infected
+                name = self.ALL_PLACE[p].pop()
+                person = self.people[name]
+                if person.state == infection_state[0]:
+                    person.infect_or_not(infect_prob)
+                    if person.state  == infection_state[1] and self.verbose:
+                        print(f'{person.name} is {person.state}')
+#                Incubation end
+                elif person.state == infection_state[1]:
+                    person.get_sick_or_not(get_sick_prob)
+                    
+                    if person.state == infection_state[2] and (person.name not in self.infect_people):
+                        self.datas["infected_people"].append(person.name)
+                        self.infect_people.append(person.name)
+                        if self.verbose:
+                            print(f'{person.name} is {person.state}')
+        
     def new_simulation(self, time_index):
         infected_place = set()
         for name in self.people.keys():
@@ -442,7 +496,7 @@ class env:
 #                        self.infect_people.append(person.get_info()[0])
             
   
-Environment = env(1000, 5, 0.1, 0.5)
+Environment = env(5000, 5, 0.1, 0.5)
 Environment.progress()               
     
         
