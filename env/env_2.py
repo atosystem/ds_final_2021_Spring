@@ -76,18 +76,23 @@ class Person:
                 Accumulate_infect_number += 1
         
         def get_sick_or_not(self, p):
-            global current_2_number, current_1_number
+            global current_2_number
+            global current_1_number
             if p < self.Incubation_length and self.state == infection_state[1]: 
                 current_2_number += 1
                 current_1_number -= 1
                 self.state = infection_state[2]
 
         def cured(self):
-            global Accumulate_cured_number, current_2_number, current_1_number
+            global Accumulate_cured_number
+            global current_2_number
+            global current_1_number
             if self.state == infection_state[1]:
-                current_2_number -= 1
-            elif self.state == infection_state[2]:
                 current_1_number -= 1
+            elif self.state == infection_state[2]:
+                current_2_number -= 1
+                
+           
 #            this will halt miss
 #            else:
 #                raise "shit cure wrong !!!!!!!!!"
@@ -156,11 +161,15 @@ class env:
         self.datas["people_list"] = {}
         self.datas["infected_people"] = []
         
-        places = iter(self.init_address)
+#        places = iter(self.init_address)
+        global current_2_number
+        global Accumulate_infect_number
+        current_2_number += self.init_infect_number
+        Accumulate_infect_number += self.init_infect_number
         for i in range(self.init_infect_number):
             name = str(uuid.uuid4())
             self.people[name] = Person(name)
-            self.people[name].last_place = next(places) 
+            self.people[name].last_place = random.choice(self.init_address) 
             
             self.people[name].state = infection_state[2] 
 #            self.datas["names"].append(name)
@@ -171,11 +180,11 @@ class env:
         for i in range(self.POPULATION-self.init_infect_number):
             name = str(uuid.uuid4())
             self.people[name] = Person(name)
-            self.people[name].last_place = next(places)
+            self.people[name].last_place = random.choice(self.init_address)
 #            self.datas["names"].append(name)
         for i in range(self.simulation_time):
              self.datas["people_list"][i] = {}
-
+        print("Length of people ", len(self.people))
         print("Done Init",flush=True)
               
     def reset(self): # called when search is over
@@ -228,7 +237,6 @@ class env:
             goin = 0
             catch_miss = 0 # record those whom isolated but not infected
              # lU TODO ##########################
-            
             for person in sick_people[:num]:
                 if self.people[person].state == infection_state[0]:
                     catch_miss += 1
@@ -247,8 +255,8 @@ class env:
                     
             self.reset()
 #            if self.verbose:
-            print(f"people at {infection_state[1]}:",current_1_number)
-            print(f"people at {infection_state[2]}:",current_2_number)
+            print(f"Not isolated people at {infection_state[1]}:",current_1_number)
+            print(f"Not isolated people at {infection_state[2]}:",current_2_number)
             print("Accumulated infected person :",Accumulate_infect_number)
             print("Accumulated cured person :",Accumulate_cured_number)
             print("-------------------------------------------------------------")
