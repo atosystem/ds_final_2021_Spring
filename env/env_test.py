@@ -50,9 +50,9 @@ class Person:
             self.phone_number = random_phone_num_generator()
             self.state = infection_state[0]
             self.last_place = []
-            self.infect_prob = random.random()
+            self.infect_prob = random.random()/3
             self.go_outside_prob = random.random()
-            self.Incubation_length = random.random() / 2 # make Incubation longer
+            self.Incubation_length = random.random()  # make Incubation longer
             
         def __eq__(self, other):
             if not isinstance(other, __class__):
@@ -71,7 +71,7 @@ class Person:
             # consider person difference
             global current_1_number
             global Accumulate_infect_number
-            if p < self.infect_prob and self.state == infection_state[0]: # get infected
+            if self.infect_prob < p  and self.state == infection_state[0]: # get infected
                 self.state = infection_state[1]
                 current_1_number += 1
                 Accumulate_infect_number += 1
@@ -79,7 +79,7 @@ class Person:
         def get_sick_or_not(self, p):
             global current_2_number
             global current_1_number
-            if p < self.Incubation_length and self.state == infection_state[1]: 
+            if self.Incubation_length < p and self.state == infection_state[1]: 
                 current_2_number += 1
                 current_1_number -= 1
                 self.state = infection_state[2]
@@ -116,7 +116,7 @@ class env:
         self.I_PROB = I_PROB # Infection probability
         self.infect_number = 0
 #        self.search_time = 5 #  being dependent to search time
-        self.simulation_time = 3 # how many simulation between search
+        self.simulation_time = 2 # how many simulation between search
         self.progress_time = progress_time # how many search to conduct
         self.verbose = False
         self.infect_people = []
@@ -211,8 +211,8 @@ class env:
         global current_2_number
         print("Time is ", Time)
         print("current_2_number is ", current_2_number)
-        num = self.POPULATION * self.I_PROB * (1- ((Time*self.init_infect_number) / current_2_number) )
-        print("percent is ", ((Time+5) / current_2_number))
+        num = self.POPULATION * self.I_PROB  * (1- ((Time) / (current_2_number+1) ))
+        print("percent is ", ((Time) / (current_2_number+1)))
         if self.verbose:
             print(f"Can take {int(num+1)} people")
         return max(0, int(num+1))
@@ -248,9 +248,9 @@ class env:
                         catch_miss += 1
                     else:
                         Accumulate_isolated_infect_number += 1
-                    self.hospital.put(person)
-                    self.people[person].cured()
-                    del self.people[person]
+                        self.hospital.put(person)
+                        self.people[person].cured()
+                        del self.people[person]
                     goin += 1
                 
 #            if self.verbose:
@@ -346,7 +346,7 @@ class env:
             
             p = infected_place.pop() # got one infected place
             infect_prob = random.uniform(0, self.I_PROB) # infection_state 0 -> 1
-            get_sick_prob = random.uniform(0, self.I_PROB) # infection_state 1 -> 2  
+            get_sick_prob = random.uniform(0, self.I_PROB)*3 # infection_state 1 -> 2  
             while(len(self.ALL_PLACE[p]) > 0):# traverse all the name in place infected
                 name = self.ALL_PLACE[p].pop()
                 person = self.people[name]
@@ -365,8 +365,8 @@ class env:
         
 
 Environment = env(
-    POPULATION=50000, 
-    I_PROB=0.05,  
+    POPULATION=100000, 
+    I_PROB=0.2,  
     progress_time = 5
 )
 Environment.progress()   
