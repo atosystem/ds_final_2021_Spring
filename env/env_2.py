@@ -235,11 +235,12 @@ class env:
             catch_miss = 0 # record those whom isolated but not infected
              # lU TODO ##########################
             for person in sick_people[:num]:
-                if self.people[person].state == infection_state[0]:
-                    catch_miss += 1
-                else:
-                    Accumulate_isolated_infect_number += 1
+                
                 if self.hospital.qsize() < self.hospital_size:
+                    if self.people[person].state == infection_state[0]:
+                        catch_miss += 1
+                    else:
+                        Accumulate_isolated_infect_number += 1
                     self.hospital.put(person)
                     self.people[person].cured()
                     del self.people[person]
