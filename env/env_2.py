@@ -17,6 +17,7 @@ import uuid
 
 #from enum import Enum
 Accumulate_infect_number = 0
+Accumulate_isolated_infect_number = 0
 #Accumulate_dead_number = 0
 Accumulate_cured_number = 0
 current_1_number = 0
@@ -213,7 +214,7 @@ class env:
         return int(num+1)
 
     def progress(self): # start next round
-        global Accumulate_cured_number,  Accumulate_infect_number, current_1_number, current_2_number 
+        global Accumulate_cured_number,  Accumulate_infect_number, Accumulate_isolated_infect_number, current_1_number, current_2_number 
         for k in range(self.progress_time):
             if self.verbose:
                 print("-------------------------------------------------------------")            
@@ -236,6 +237,8 @@ class env:
             for person in sick_people[:num]:
                 if self.people[person].state == infection_state[0]:
                     catch_miss += 1
+                else:
+                    Accumulate_isolated_infect_number += 1
                 if self.hospital.qsize() < self.hospital_size:
                     self.hospital.put(person)
                     self.people[person].cured()
@@ -248,9 +251,9 @@ class env:
             print("     Can go to hospital : ", goin)
             print("     Can't go to hospital : ", num - goin)
             print(f"Catch miss rate : {100*(catch_miss/num)}% ({catch_miss}/{num})" )
-            print(f"isolated rate of infected people {100*(Accumulate_cured_number/Accumulate_infect_number)}%")
+            print(f"isolated rate of infected people {100*(Accumulate_isolated_infect_number/Accumulate_infect_number)}%")
             self.visalization_data['isolated_miss_rate'].append(100*(catch_miss/num))        
-            self.visalization_data['infected_isolated_rate'].append(100*(catch_miss/num))        
+            self.visalization_data['infected_isolated_rate'].append(100*(Accumulate_isolated_infect_number/Accumulate_infect_number))        
             self.reset()
 #            if self.verbose:
             print(f"Not isolated people at {infection_state[1]}:",current_1_number)
