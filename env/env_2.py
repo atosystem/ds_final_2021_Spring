@@ -14,6 +14,12 @@ import queue
 import json
 import codecs
 import uuid
+import multiprocessing as mp
+
+print("Using Multi Process [cpu_count#{}]".format(mp.cpu_count()))
+my_lock = mp.Lock()
+
+global_place = json.load(codecs.open(r"./place.json", 'r', 'utf-8'))
 
 #from enum import Enum
 Accumulate_infect_number = 0
@@ -100,13 +106,78 @@ class Person:
             self.state = infection_state[3]
                 
                 
-       
+# top-level functions for multi processing
+def mp_Move(person,verbose=False):
+    global global_place
+    last = person.last_place
+    data = global_place
+    new_location = ['台灣']
+    #print(len(data))
+    if verbose:
+        print("last location is ", last)
+    move = False
+    #new_place = ""
+    for i in range(1,5):
+    #    for key in data.keys():
+        keys = []
+        prob = []
+        try:
+            for key in data.keys():
+                if key == "All_place":
+                    continue
+                keys.append(key)
+                if not (move):
+                    if key == last[i]:
+                        prob.append(1-i/10)
+                    else :
+                        prob.append((i/10)/(len(data)-1))
+                else:
+                    prob.append(1/len(data))
+        except:
+            print("data is ", data)
+                
+        new_place = random.choices(keys, weights=prob)[0]
+        new_location.append(new_place)
+        if not move and new_place != last[i]:
+            move = True
+        data = data[new_place]
+    #    new_place = data
+    new_location.append(data[-1])
+    if verbose:
+        print("Go to ", new_location)
+    person.last_place = new_location  
+    return
+    # return new_location
+# not currently used
+def mp_simulate_person_movement(person,place_data,time_index,infected_place_list,ALL_PLACE_list,mp_datas,verbose=True):
+
+    if verbose:
+        print("*******************************************")
+        print("Person :", person.get_info())
+    
+    person.last_place = mp_Move(place_data,person.last_place)
+    temp = "".join(person.last_place)
+    # record place of infected, used for virus propagation
+    my_lock.acquire()
+    if (person.state == infection_state[1] or person.state == infection_state[2]):
+        #for p in person.last_place:
+        
+        infected_place_list.append(temp)
+        
+        if verbose:
+            print(f"{person.last_place} is infected !!")
+    # recorder every place has who
+    # for key in person.last_place:
+    mp_ALL_PLACE[temp].add(person.name)
+    # store the data for search
+    mp_datas["people_list"][time_index][person.name] = person.last_place
+    my_lock.release()
                 
         
             
 class env:
     
-    def __init__(self, POPULATION, NUM_P, I_PROB, O_PROB, progress_time = 1):
+    def __init__(self, POPULATION, NUM_P, I_PROB, O_PROB, progress_time = 1,enable_multi_process=False):
         
         self.POPULATION = POPULATION # population of environment
         self.init_infect_number = 10
@@ -141,6 +212,10 @@ class env:
                     'Accumulate_infect':[],
                     'Accumulate_cured':[]
                 }
+        
+        # for multi process
+        self.manager = mp.Manager()
+        self.enable_multi_process = enable_multi_process
         
 #        self.tranistion_matrix = [
 #                                  [  0.9, 0.025, 0.025, 0.025, 0.025],
@@ -205,18 +280,18 @@ class env:
         # Output : list of people to be isolated(state 2),(optional) list of people to be self isolated(state 1) 
 
         from Brute_force import Brute_force
-#        from Trie import trie_search
+        from Trie import trie_search
         # results = Brute_force(self.datas)
-        results = Brute_force(self.datas)
-        
-        
+        results = trie_search(self.datas)
+        print("results len ",len(results))
         return results
     
     
         
     def calculate_search_time(self, Time):
         # can be modified
-        num = 10 // Time
+        num = 20 // Time
+        print("TIME {}".format(num))
         if self.verbose:
             print(f"Can take {int(num+1)} people")
         return int(num+1)
@@ -300,36 +375,92 @@ class env:
             print("Go to ", new_location)  
         return new_location
     
-    def new_simulation_2(self, time_index):
-        infected_place = set()
+    # not currently used
+    def simulate_person_movement(self,person_name,time_index,infected_place_list):
+        print("asd : ",person_name)
+        person = self.people[person_name]
+        if self.verbose:
+            print("*******************************************")
+            print("Person :", person.get_info())
         
+        person.last_place = self.Move(person.last_place)
+        temp = ""
+        for p in person.last_place:
+            temp += p
+        # record place of infected, used for virus propagation
+        self.my_lock.acquire()
+        if (person.state == infection_state[1] or person.state == infection_state[2]):
+            #for p in person.last_place:
+            
+            infected_place_list.append(temp)
+            
+            if self.verbose:
+                print(f"{person.last_place} is infected !!")
+        # recorder every place has who
+        # for key in person.last_place:
+        self.ALL_PLACE[temp].add(person.name)
+        # store the data for search
+        self.datas["people_list"][time_index][person_name] = person.last_place
+        self.my_lock.release()
+
+    def new_simulation_2(self, time_index):
+
+        # infected_place_mp = self.manager.list()
+        
+        if self.enable_multi_process:
+            with mp.Pool(mp.cpu_count()) as pool:
+                for person in self.people.values():
+                    # person = self.people[name]
+                    pool.apply_async(mp_Move,(person,False))
+                    # pool.apply_async(self.simulate_person_movement,[self,name,time_index,infected_place_mp])
+                pool.close()
+                print("Begin multi")
+                pool.join()
+                print("End multi")
+        else:
+            print("Begin non-multi")
+            for person in self.people.values():
+                # person = self.people[name]
+                mp_Move(person,False)
+            print("End non-multi")
+
+        # infected_place = set([x for x in infected_place_mp])
+        infected_place_list = [] 
+        # print("Begin")
         for name in self.people.keys():
             person = self.people[name]
             if self.verbose:
                 print("*******************************************")
                 print("Person :", person.get_info())
             
-            person.last_place = self.Move(person.last_place)
-            temp = ""
-            for p in person.last_place:
-                temp += p
+            temp = "".join(person.last_place)
             # record place of infected, used for virus propagation
             if (person.state == infection_state[1] or person.state == infection_state[2]):
-#                for p in person.last_place:
-                infected_place.add(temp)
+                #for p in person.last_place:
+                
+                infected_place_list.append(temp)
+                
                 if self.verbose:
                     print(f"{person.last_place} is infected !!")
             # recorder every place has who
-#            for key in person.last_place:
+            # for key in person.last_place:
             self.ALL_PLACE[temp].add(person.name)
             # store the data for search
-            self.datas["people_list"][time_index][name] = person.last_place
-        infect_prob = random.uniform(0, 0.1) # infection_state 0 -> 1
-        get_sick_prob = random.uniform(0, 0.1) # infection_state 1 -> 2        
+            self.datas["people_list"][time_index][person.name] = person.last_place
+
+        # print("End")
+        infected_place  = set(infected_place_list)
+        # for name in self.people.keys():
+        #     self.simulate_person_movement(name,time_index,infected_place_mp)
+        
+
         
         while(len(infected_place) > 0): # traverse all the place infected
             
             p = infected_place.pop() # got one infected place
+
+            infect_prob = random.uniform(0, 0.1) # infection_state 0 -> 1
+            get_sick_prob = random.uniform(0, 0.1) # infection_state 1 -> 2        
             
             while(len(self.ALL_PLACE[p]) > 0):# traverse all the name in place infected
                 name = self.ALL_PLACE[p].pop()
@@ -395,10 +526,11 @@ class env:
 #                            print(f'{person.name} is {person.state}')
         
 Environment = env(
-    POPULATION=5000, 
+    POPULATION=50000, 
     NUM_P=5, # unused
     I_PROB=0.1, 
     O_PROB=0.5, 
-    progress_time = 5
+    progress_time = 5,
+    enable_multi_process=True
 )
 Environment.progress()   

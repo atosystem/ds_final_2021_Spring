@@ -145,7 +145,8 @@ class env:
         self.datas["people_list"] = {}
         self.datas["infected_people"] = []
         
-        places = iter(self.init_address)
+        # places = iter(self.init_address)
+        temp_i = 0
         for i in range(self.init_infect_number):
             name = str(uuid.uuid4())
             # name = names.get_full_name()
@@ -157,7 +158,9 @@ class env:
             #         print("Too many duplicate name !!!")
             #         raise "Shit, too many duplicate name !!!"
             self.people[name] = Person(name)
-            self.people[name].last_place = next(places) 
+            # self.people[name].last_place = next(places) 
+            self.people[name].last_place = self.init_address[temp_i %len(self.init_address)]
+            temp_i +=1 
             
             self.people[name].state = infection_state[2] 
 #            self.datas["names"].append(name)
@@ -176,7 +179,9 @@ class env:
             #         print("Too many duplicate name !!!")
             #         raise "Shit, too many duplicate name !!!"
             self.people[name] = Person(name)
-            self.people[name].last_place = next(places)
+            # self.people[name].last_place = next(places)
+            self.people[name].last_place = self.init_address[temp_i %len(self.init_address)]
+            temp_i +=1 
 #            self.datas["names"].append(name)
         for i in range(self.simulation_time):
              self.datas["people_list"][i] = {}
@@ -283,9 +288,11 @@ class env:
             for i in range(self.simulation_time):
                 self.new_simulation_2(i)
             
+            print("Start search")
             start = time.time()
             sick_people = self.search()
             end = time.time()
+            print("End search")
             num = self.calculate_search_time(end-start)
 #            exit(0)
             goin = 0
@@ -446,7 +453,7 @@ class env:
                             print(f'{person.name} is {person.state}')
         
 Environment = env(
-    POPULATION=5000, 
+    POPULATION=60000,
     NUM_P=5, # unused
     I_PROB=0.1, 
     O_PROB=0.5, 
