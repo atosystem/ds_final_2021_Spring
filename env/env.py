@@ -453,7 +453,7 @@ class env:
                             print(f'{person.name} is {person.state}')
         
 Environment = env(
-    POPULATION=60000,
+    POPULATION=100000, 
     NUM_P=5, # unused
     I_PROB=0.1, 
     O_PROB=0.5, 
