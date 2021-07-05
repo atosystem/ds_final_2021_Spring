@@ -1,7 +1,9 @@
 # Covid-19 疾病傳播模擬
 
-![](https://i.imgur.com/rFQpES3.gif)
+![](https://i.imgur.com/QvwzACg.gif)
+> Animated Map
 ![](https://i.imgur.com/OIf1CTz.gif)
+> Dynamic Results Demo
 # Prerequisite
 ```
 $ pip install -r requirements.txt
