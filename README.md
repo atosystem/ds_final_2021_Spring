@@ -1,4 +1,4 @@
-# ds_final_2021_Spring
+# Covid-19 疾病傳播模擬
 
 ![](https://i.imgur.com/rFQpES3.gif)
 
@@ -7,15 +7,37 @@
 $ pip install -r requirements.txt
 ```
 
-# Run environment
+# Run Environment
 ...
-# Run animated map
+# Run Animated Map
 Demo : [Link]("https://youtu.be/cUGV4uGejgQ")
 
-Go to `./location_visualization` for more details
+Go to [`./location_visualization`](./location_visualization) for more details
+
+# Functionalities
+1. Environment for people movements and epidemic simulation
+2. Using `Trie` and `Brute Force` to isolate people
+3. Animated Map for visualization
 
 
-# i : ith place
-search algorithm input: {"number of place": k, i": [["name1, name2"], ["name1, name2""name1, name2"] ......], "i+1": [["name1, name2"], ["name3", "name4"] ......], "i+2": [["name1, name2"], ["name3", "name4"] ......] ..... , "names": ["name1, name2", "name3, name4", .....nameT], "infected_names":["namek", "namet".....]}
+# Input/Output for our Search Algorithm
 
-search algorithm output: ["namek", "namez".....] # include all people names who had ever been in contact with infected people
+Search Algorithm Input: 
+```
+{
+    "people_list":
+    {
+        "王大華" : ["台灣","北區","台北市","大安區","羅斯福路","7-11"],
+        "王小華" : ["台灣","北區","台北市","大安區","復興南路","全家"],
+        ...
+    },
+    "infected_people":["王小華"...]
+}
+```
+> `people_list` indicates the places where all people are
+
+search algorithm output: (include all people names who needs to be isolated)
+```
+["王小華", "王大華"...]
+```
+> Note that in our implementation, we use uuid or ID instead of Chinese Name.
