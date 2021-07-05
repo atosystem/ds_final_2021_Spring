@@ -14,7 +14,7 @@ $ pip install -r requirements.txt
 ```
 
 # Run Environment
-Go to [`./env`](./env) and run env2.py
+Go to [`./env`](./env) and run env_2.py
 ```
 $ cd env
 $ python env2.py
