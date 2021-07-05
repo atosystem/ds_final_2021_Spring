@@ -9,5 +9,5 @@
 ## 3. Modify your output file path and run the code. If you want to show the video in jupter notebook, please modify output file path as "None".
 # Customize
 ## You can modify the parameters in bcr.bar_chart_race function according to your need.
-### Reference : https://github.com/dexplo/bar_chart_race?fbclid=IwAR1GT3bBfHpyqUKcDnMJbSbFo9KjIDbvgSlcggatCqQUzsXOlINWF2T962g
+### Reference : https://github.com/dexplo/bar_chart_race
 ## The code is based on bar_chart_race package
