@@ -16,6 +16,7 @@ $ pip install -r requirements.txt
 # Run Environment
 Go to [`./env`](./env) and run env2.py
 ```
+$ cd env
 $ python env2.py
 ```
 # Run Animated Map
@@ -26,7 +27,7 @@ Go to [`./location_visualization`](./location_visualization) for more details
 # Run dynamic results demo
 Go to [`./demo`](./demo) for more details
 
-Code based on repo : [bar_chart_race](https://github.com/dexplo/bar_chart_race)
+Code based on Repo : [bar_chart_race](https://github.com/dexplo/bar_chart_race)
 
 # Functionalities
 1. Environment for people movements and epidemic simulation
