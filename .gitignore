@@ -133,3 +133,5 @@ dmypy.json
 exp/
 
 .vscode/
+
+env/brute_map_data.json

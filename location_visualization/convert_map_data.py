@@ -2,7 +2,7 @@
 import json
 import random
 import numpy as np
-with open('./map_data.json', newline='') as f:
+with open('../env/brute_map_data.json', newline='') as f:
     map_data = json.load(f)
 
 with open('./geoloaction_clean.json', newline='') as f:

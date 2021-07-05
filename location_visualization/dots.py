@@ -46,7 +46,7 @@ size_for_state = {
 
 
 
-with open('../exp/map_data_converted.json', newline='') as f:
+with open('./map_data_converted.json', newline='') as f:
     movingdata = json.load(f)
 
 # Creating dot class
