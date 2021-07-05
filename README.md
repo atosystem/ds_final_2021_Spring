@@ -1,7 +1,7 @@
 # Covid-19 疾病傳播模擬
 
 ![](https://i.imgur.com/rFQpES3.gif)
-
+![](https://i.imgur.com/OIf1CTz.gif)
 # Prerequisite
 ```
 $ pip install -r requirements.txt
@@ -14,10 +14,17 @@ Demo : [Link]("https://youtu.be/cUGV4uGejgQ")
 
 Go to [`./location_visualization`](./location_visualization) for more details
 
+# Run dynamic results demo
+Go to `./demo` for more details
+
+Code based on repo : [bar_chart_race]("https://github.com/dexplo/bar_chart_race")
+## The code is based on bar_chart_race package)
+
 # Functionalities
 1. Environment for people movements and epidemic simulation
 2. Using `Trie` and `Brute Force` to isolate people
 3. Animated Map for visualization
+
 
 
 # Input/Output for our Search Algorithm
