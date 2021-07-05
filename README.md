@@ -1,5 +1,7 @@
 # ds_final_2021_Spring
 
+![](https://i.imgur.com/rFQpES3.gif)
+
 # Prerequisite
 ```
 $ pip install -r requirements.txt
@@ -8,10 +10,9 @@ $ pip install -r requirements.txt
 # Run environment
 ...
 # Run animated map
+Demo link 
 
 Go to `./location_visualization` for more details
-
-
 
 
 # i : ith place
