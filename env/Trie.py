@@ -98,7 +98,7 @@ class trie():
 
 def trie_search(sim_data):
     mytrie = trie()
-    SEARCH_LEVEL = 5
+    SEARCH_LEVEL = 3
     PEOPLE_LIST_TIMESTEP = 0
     import numpy as np
 
@@ -129,42 +129,49 @@ def trie_search(sim_data):
     
     return [c.value for c in results]
 
+
+def my_trie_search(sim_data):
+    mytrie = trie()
+    SEARCH_LEVEL = 3
+    PEOPLE_LIST_TIMESTEP = 0
+    import numpy as np
+    import time
+
+    insert_start = time.time()
+    # insert into trie
+    for _person in sim_data['people_list'][PEOPLE_LIST_TIMESTEP]:
+        # print({"name":_person,"address":sim_data['people_list'][_person]})
+        mytrie.insert({"name":_person,"address":sim_data['people_list'][PEOPLE_LIST_TIMESTEP][_person]})
+    insert_end = time.time()
+    results = []
+    # search area
+    print("Search level : {}".format(SEARCH_LEVEL),flush=True)
+
+    search_start = time.time()
+    for _infected_person in sim_data['infected_people']:
+        # print()
+        # print({"name":_infected_person,"address":sim_data['people_list'][PEOPLE_LIST_TIMESTEP][_infected_person]})
+        _r = mytrie.searchArea({"name":_infected_person,"address":sim_data['people_list'][PEOPLE_LIST_TIMESTEP][_infected_person]},SEARCH_LEVEL)    
+        results.extend(_r)
+
+
+    results = list(set(results))
+    results.sort(key=lambda a:-a.weight)  
+    search_end = time.time()  
+    return [c.value for c in results], {"insert_time":insert_end-insert_start,"search_time":search_end-search_start}
+
+
 if __name__=="__main__":
     mytrie = trie()
-    SEARCH_LEVEL = 1
     import json
     import numpy as np
     with open("../raw_data/init_data.json","r") as f:
         sim_data = json.load(f)
-    
-    # print(sim_data)
 
-    
-    
-    # insert into trie
-    for _person in sim_data['people_list']:
-        # print({"name":_person,"address":sim_data['people_list'][_person]})
-        mytrie.insert({"name":_person,"address":sim_data['people_list'][_person]})
-
-    results = []
-    # search area
-    print("Search")
-    for _infected_person in sim_data['infected_people']:
-        # print()
-        print({"name":_infected_person,"address":sim_data['people_list'][_infected_person]})
-        _r = mytrie.searchArea({"name":_infected_person,"address":sim_data['people_list'][_infected_person]},SEARCH_LEVEL)    
-        results.extend(_r)
-
-    results = list(set(results))
-    results.sort(key=lambda a:-a.weight)
-    people_names = []
-    for c in results:
-        print((c.weight,c.value , c.entire_address))
-        people_names.append((c.value , c.entire_address))
-    #     people_names.extend([(c.value , c.entire_address) for c in x])
-    print("result")
-    # for p in people_names:
-    #     print(p)
-    # print(people_names)
+    r = my_trie_search({"infected_people":sim_data['infected_people'],"people_list":[sim_data["people_list"]]})
+    print("Total people : {}".format(len(sim_data["people_list"])))
+    print("Total infect : {}".format(len(sim_data['infected_people'])))
+    print("insert Time : {}".format(r[1]["insert_time"]))
+    print("search Time : {}".format(r[1]["search_time"]))
 
     

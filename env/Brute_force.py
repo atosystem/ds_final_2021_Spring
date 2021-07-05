@@ -88,3 +88,19 @@ def Brute_force(sim_data):
     results = brute_method.get_output()
 #    print(results)
     return results
+
+if __name__ == "__main__":
+    import time
+    import json
+    with open("../raw_data/init_data.json","r") as f:
+        sim_data = json.load(f)
+
+    start_time = time.time()
+    r = Brute_force({"infected_people":sim_data['infected_people'],"people_list":[sim_data["people_list"]]})
+    end_time = time.time()
+
+    print("Total people : {}".format(len(sim_data["people_list"])))
+    print("Total infect : {}".format(len(sim_data['infected_people'])))
+    print("Total Time : {}".format(end_time-start_time))
+
+
