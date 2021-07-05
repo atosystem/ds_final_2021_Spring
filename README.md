@@ -15,7 +15,7 @@ Demo : [Link]("https://youtu.be/cUGV4uGejgQ")
 Go to [`./location_visualization`](./location_visualization) for more details
 
 # Run dynamic results demo
-Go to `./demo` for more details
+Go to [`./demo`](./demo) for more details
 
 Code based on repo : [bar_chart_race]("https://github.com/dexplo/bar_chart_race")
 ## The code is based on bar_chart_race package)
@@ -48,3 +48,5 @@ search algorithm output: (include all people names who needs to be isolated)
 ["王小華", "王大華"...]
 ```
 > Note that in our implementation, we use uuid or ID instead of Chinese Name.
+
+> For generating random data go to [`./raw_data`](`./raw_data`).
