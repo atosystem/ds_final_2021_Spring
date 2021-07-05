@@ -9,3 +9,4 @@ default infected people number is 1000, you cannot exceed 60000 infected people 
 ## "infected_people" contains all infected people in the beginning
 ### ex:"infected_people": ["林雅晴", "賴孟儒", "蘇志維", "李佳慧", "葉永友", "陳百宇", "李智佐", "曲素宣", "周志維", "王玉雅"]
 
+

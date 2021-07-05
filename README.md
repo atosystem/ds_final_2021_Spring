@@ -17,7 +17,6 @@ Go to `./location_visualization` for more details
 # Run dynamic results demo
 Go to `./demo` for more details
 
-# i : ith place
-search algorithm input: {"number of place": k, i": [["name1, name2"], ["name1, name2""name1, name2"] ......], "i+1": [["name1, name2"], ["name3", "name4"] ......], "i+2": [["name1, name2"], ["name3", "name4"] ......] ..... , "names": ["name1, name2", "name3, name4", .....nameT], "infected_names":["namek", "namet".....]}
+# Data
 
-search algorithm output: ["namek", "namez".....] # include all people names who had ever been in contact with infected people
+Go to `./raw_data` for more details
