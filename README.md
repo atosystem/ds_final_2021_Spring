@@ -14,7 +14,10 @@ $ pip install -r requirements.txt
 ```
 
 # Run Environment
-...
+Go to [`./env`](./env) and run env2.py
+```
+$ python env2.py
+```
 # Run Animated Map
 Demo : [Link](https://youtu.be/cUGV4uGejgQ)
 
