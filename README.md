@@ -10,7 +10,7 @@ $ pip install -r requirements.txt
 # Run environment
 ...
 # Run animated map
-Demo link 
+Demo : [Link]("https://youtu.be/cUGV4uGejgQ")
 
 Go to `./location_visualization` for more details
 
